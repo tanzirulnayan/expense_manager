@@ -13,11 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransactions = [
-    // Transaction(id: 't1', title: 'Shoes', amount: 6785, date: DateTime.now()),
-    // Transaction(
-    //     id: 't2', title: 'Groceries', amount: 1264, date: DateTime.now()),
-  ];
+  final List<Transaction> _userTransactions = [];
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -25,12 +21,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String txnTitle, double txnAmount) {
+  void _addNewTransaction(
+      String txnTitle, double txnAmount, DateTime chosenDate) {
     final newTx = new Transaction(
         id: DateTime.now().toString(),
         title: txnTitle,
         amount: txnAmount,
-        date: DateTime.now());
+        date: chosenDate);
 
     setState(() {
       _userTransactions.add(newTx);
@@ -49,6 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
       theme: ThemeData(
         primarySwatch: Colors.pink,
         accentColor: Colors.pink,
+        errorColor: Colors.red,
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
             title: TextStyle(
@@ -81,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Chart(_recentTransactions),
-              TransactionList(_userTransactions),
+              TransactionList(_userTransactions, _deleteTransaction),
             ],
           ),
         ),
