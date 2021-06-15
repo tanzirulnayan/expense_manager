@@ -18,7 +18,7 @@ class TransactionList extends StatelessWidget {
                 'No transaction found!',
                 style: Theme.of(context).textTheme.headline6,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
@@ -34,7 +34,7 @@ class TransactionList extends StatelessWidget {
             itemBuilder: (context, index) {
               return Card(
                 elevation: 5,
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 child: ListTile(
                   leading: CircleAvatar(
                     radius: 30,
