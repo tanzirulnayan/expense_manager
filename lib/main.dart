@@ -1,11 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import './models/transaction.dart';
 import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 
-void main() => runApp(MaterialApp(home: MyHomePage()));
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(MaterialApp(home: MyHomePage()));
+}
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -54,10 +62,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: Text('Expense Manager'),
-      actions: <Widget>[IconButton(onPressed: () {}, icon: Icon(Icons.add))],
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Expense Manager'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () => _startAddNewTransaction(context),
+                  child: Icon(CupertinoIcons.add),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Expense Manager'),
+            actions: <Widget>[
+              IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
+            ],
+          );
+
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.25,
+                child: Chart(_recentTransactions)),
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.75,
+                child: TransactionList(_userTransactions, _deleteTransaction)),
+          ],
+        ),
+      ),
     );
+
     return MaterialApp(
       title: 'Expense Manager',
       theme: ThemeData(
@@ -77,36 +123,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontSize: 20,
                     fontWeight: FontWeight.normal))),
       ),
-      home: Scaffold(
-        appBar: appBar,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.25,
-                  child: Chart(_recentTransactions)),
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.75,
-                  child:
-                      TransactionList(_userTransactions, _deleteTransaction)),
-            ],
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Builder(
-          builder: (context) => FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context),
-          ),
-        ),
-      ),
+      home: Platform.isIOS
+          ? CupertinoPageScaffold(
+              child: pageBody,
+              navigationBar: appBar,
+            )
+          : Scaffold(
+              appBar: appBar,
+              body: pageBody,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: Builder(
+                builder: (context) => FloatingActionButton(
+                  child: Icon(Icons.add),
+                  onPressed: () => _startAddNewTransaction(context),
+                ),
+              ),
+            ),
     );
   }
 }
