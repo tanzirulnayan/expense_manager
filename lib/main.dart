@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
     final PreferredSizeWidget appBar = Platform.isIOS
         ? CupertinoNavigationBar(
-            middle: Text('Expense Manager'),
+            middle: const Text('Expense Manager'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           )
         : AppBar(
-            title: Text('Expense Manager'),
+            title: const Text('Expense Manager'),
             actions: <Widget>[
               IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
             ],
