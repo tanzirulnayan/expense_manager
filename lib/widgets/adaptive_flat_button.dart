@@ -9,22 +9,28 @@ class AdaptiveFlatButton extends StatelessWidget {
 
   AdaptiveFlatButton(this._text, this._onPressHandler);
 
+  Widget _buildCupertinoButton() {
+    return CupertinoButton(
+      onPressed: _onPressHandler,
+      child: Text(
+        _text,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildTextButton() {
+    return TextButton(
+      onPressed: _onPressHandler,
+      child: Text(
+        _text,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
-        ? CupertinoButton(
-            onPressed: _onPressHandler,
-            child: Text(
-              _text,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          )
-        : TextButton(
-            onPressed: _onPressHandler,
-            child: Text(
-              _text,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          );
+    return Platform.isIOS ? _buildCupertinoButton() : _buildTextButton();
   }
 }
